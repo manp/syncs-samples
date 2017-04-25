@@ -5,7 +5,7 @@ Sample projects using [Syncs](https://github.com/manp/syncs) Framework
 
 ## Initialization
 
-[Download]() projects directories and run `npm install` command on projects directories
+[Download](https://github.com/manp/syncs-samples/releases/tag/1.0) projects directories and run `npm install` command on projects directories
 
 ```bash
 $ cd chatly
