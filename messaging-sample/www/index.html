@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Echo Server</title>
+    <link type="text/css" rel="stylesheet" href="style/main.css" >
+    <script src="syncs.js"></script>
+</head>
+<body>
+    <input type="text" id="input" placeholder="Write your message and hit enter..." onkeypress="onKeyPress(event)">
+    <div id="messaging-box"></div>
+</body>
+<script>
+    let io=new Syncs();
+    io.onMessage(receiveMessage)
+
+    function onKeyPress(event){
+        if(event.code=='Enter'){
+            let message=event.target.value;
+            event.target.value="";
+            sendMessage(message);
+        }
+    }
+    function sendMessage(message) {
+        io.send({message:message});
+
+        let div=document.createElement("div");
+        div.innerText="YOU: "+message;
+        document.getElementById("messaging-box").appendChild(div);
+    }
+    function receiveMessage(data){
+        let div=document.createElement("div");
+        div.innerText="SERVER: "+data.message;
+        let hr=document.createElement("hr");
+        document.getElementById("messaging-box").appendChild(div);
+        document.getElementById("messaging-box").appendChild(hr);
+
+    }
+</script>
+</html>

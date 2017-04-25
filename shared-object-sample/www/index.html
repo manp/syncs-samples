@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Echo Server</title>
+    <link type="text/css" rel="stylesheet" href="style/main.css" >
+    <script src="scripts/jquery-3.2.0.min.js"></script>
+    <script src="syncs.js"></script>
+</head>
+<body>
+    <div id="settings">
+        <div id="group-titles">
+            <h2>Group Titles</h2>
+            <input type="text" placeholder="Group 1 Title">
+            <input type="text" placeholder="Group 2 Title">
+            <input type="text" placeholder="Group 3 Title">
+        </div>
+        <div id="group-colors">
+            <h2>Group colors</h2>
+            <select>
+                <option selected>red</option>
+                <option>green</option>
+                <option>blue</option>
+                <option>pink</option>
+                <option>orange</option>
+                <option>purple</option>
+            </select>
+            <select>
+                <option selected>red</option>
+                <option>green</option>
+                <option>blue</option>
+                <option>pink</option>
+                <option>orange</option>
+                <option>purple</option>
+            </select>
+            <select>
+                <option selected>red</option>
+                <option>green</option>
+                <option>blue</option>
+                <option>pink</option>
+                <option>orange</option>
+                <option>purple</option>
+            </select>
+        </div>
+        <div id="global">
+            <h2>Time</h2>
+            <h3 id="time">10:12:15</h3>
+        </div>
+    </div>
+    <div id="clients">
+        <div>
+        <h2>Client 1</h2>
+        <h3>Title</h3>
+        <select>
+            <option value="g1" selected>Group 1</option>
+            <option value="g2">Group 2</option>
+            <option value="g3">Group 3</option>
+        </select>
+        </div>
+        <div>
+            <h2>Client 2</h2>
+            <h3>Title</h3>
+            <select>
+                <option value="g1" >Group 1</option>
+                <option value="g2" selected>Group 2</option>
+                <option value="g3">Group 3</option>
+            </select>
+        </div>
+        <div>
+            <h2>Client 3</h2>
+            <h3>Title</h3>
+            <select>
+                <option value="g1" selected>Group 1</option>
+                <option value="g2">Group 2</option>
+                <option value="g3">Group 3</option>
+            </select>
+        </div>
+        <div>
+            <h2>Client 4</h2>
+            <h3>Title</h3>
+            <select>
+                <option value="g1" >Group 1</option>
+                <option value="g2">Group 2</option>
+                <option value="g3" selected>Group 3</option>
+            </select>
+        </div>
+        <div>
+            <h2>Client 5</h2>
+            <h3>Title</h3>
+            <select>
+                <option value="g1" >Group 1</option>
+                <option value="g2" selected>Group 2</option>
+                <option value="g3" >Group 3</option>
+            </select>
+        </div>
+    </div>
+</body>
+<script>
+
+    //init master client which is able to change titles and colors
+    function initMaster(){
+        let masterClient=new Syncs();
+
+        let titles=$("#group-titles>input");
+        let colors=$("#group-colors>select");
+
+
+        // get time shared variable
+        let time=masterClient.globalShared("time");
+        // handle time change
+        time(()=>{
+            $("#time").text(time.string);
+        });
+
+        //get write-able shared variable
+        let settings=masterClient.shared('settings');
+
+        //handle changes setting change on server
+        settings(()=>{
+            $(titles[0]).val(settings.title1);
+            $(titles[1]).val(settings.title2);
+            $(titles[2]).val(settings.title3);
+            $(colors[0]).val(settings.color1);
+            $(colors[1]).val(settings.color2);
+            $(colors[2]).val(settings.color3);
+        });
+
+        //handle titles change
+        titles.keyup(function(){
+            settings["title"+(titles.index(this)+1)]=$(this).val();
+        });
+
+        //handle colors change
+        colors.change(function(){
+            settings["color"+(colors.index(this)+1)]=$(this).val();
+        });
+
+        //register as master client when connection opened
+        masterClient.onOpen(()=>{
+            masterClient.remote.registerAsMaster();
+        })
+
+
+    }
+
+
+    //init clients
+    // this function will create five syncs connection to server each as a client
+    function initClients(){
+        let clients=[];
+
+        for(let i=6;i<=250;i++){
+            let group=Math.floor(Math.random()*3);
+            $('#clients').append($(`<div>
+                                        <h2>Client ${i}</h2>
+                                        <h3>Title</h3>
+                                        <select>
+                                            <option value="g1" ${group==0?'selected':''}>Group 1</option>
+                                            <option value="g2" ${group==1?'selected':''}>Group 2</option>
+                                            <option value="g3" ${group==2?'selected':''}>Group 3</option>
+                                        </select>
+                                    </div>`))
+        }
+        $("#clients>div").each(function(i,o){
+            //create new syncs real-time connection
+            let client=new Syncs();
+//            client.enableDebugMode();
+            // get pre selected group
+            let groupName=$(o).find('select').val();
+
+            //handle pre selected group setting change
+            handleSettingChange();
+
+            //register on pre selected group
+            client.onOpen(()=>registerInGroup())
+
+
+
+            // re
+            $(o).find('select').change(function(){
+                registerInGroup();
+                handleSettingChange();
+            })
+
+            // get selected group name
+            function getGroupName() {
+                return $(o).find('select').val();
+            }
+
+            // handle changes in selected group settings change
+            function handleSettingChange(){
+               let  settings =client.groupShared(getGroupName(),"settings");
+                settings(()=>{
+                    $(o).find("h3").text(settings.title);
+                    $(o).removeClass("reg green blue pink orange purple").addClass(settings.color);
+                });
+            }
+            //register in group
+            function registerInGroup(){
+                clients[i].remote.registerInGroup(getGroupName())
+            };
+            clients[i]=client;
+        })
+    }
+
+
+
+    initMaster()
+    initClients()
+</script>
+</html>

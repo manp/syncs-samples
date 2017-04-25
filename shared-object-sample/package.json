@@ -1,0 +1,22 @@
+{
+  "name": "shared-object-sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "express": "^4.15.2",
+    "syncs": "^1.0.2",
+    "syncs-browser": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/colors": "^1.1.2",
+    "@types/express": "^4.0.35",
+    "@types/node": "^7.0.12"
+  }
+}

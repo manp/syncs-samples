@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Echo Server</title>
+    <link type="text/css" rel="stylesheet" href="style/main.css" >
+    <script src="syncs.js"></script>
+</head>
+<body>
+    <input type="text" id="input" placeholder="Enter country name to search ..." onkeyup="onKeyUp(event)">
+    <div id="result-box">
+
+    </div>
+</body>
+<script>
+    let resultBox=document.getElementById('result-box');
+    let io=new Syncs();
+    io.enableDebugMode();
+    let prevQuery="";
+    function onKeyUp(event){
+            let query=event.target.value;
+            if(query==prevQuery){
+                return;
+            }
+            prevQuery=query;
+            console.log(query);
+
+            io.publish('query',{query:query});
+    }
+
+    io.subscribe('query-result',result=>{
+        resultBox.innerHTML="";
+       result.forEach(country=>{
+            let div=document.createElement("div");
+            div.innerHTML=`<span class="name">${country.name}</span> <span class="code">${country.code}</span>`;
+            resultBox.appendChild(div);
+       })
+    });
+</script>
+</html>

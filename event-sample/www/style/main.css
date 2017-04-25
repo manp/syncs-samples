@@ -1,0 +1,31 @@
+html, body {
+  height: 100%; }
+
+body {
+  display: flex;
+  flex-flow: column; }
+  body > #input {
+    flex: 0 0 30px;
+    font-size: 1.5em; }
+  body > #result-box {
+    flex: 1;
+    margin-top: 10px;
+    border: solid 1px #eee;
+    border-radius: 3px;
+    overflow-y: auto; }
+    body > #result-box > div {
+      margin: 5px 10px;
+      border-bottom: 1px solid #eee; }
+      body > #result-box > div > .name {
+        color: #05051d;
+        font-size: 1.3em; }
+      body > #result-box > div > .code {
+        margin-left: 10px;
+        display: inline-block;
+        padding: 3px;
+        border-radius: 5px;
+        font-family: monospace;
+        background-color: #eee;
+        vertical-align: top; }
+
+/*# sourceMappingURL=main.css.map */

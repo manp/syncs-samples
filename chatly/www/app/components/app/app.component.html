@@ -1,0 +1,92 @@
+<div class="main-window">
+    <div class="top-bar">
+        <button class="ui labeled icon button" (click)="selectedUserId='global'" [class.secondary]="selectedUserId=='global'" >
+            <i class="users icon"></i>
+            Global Room
+        </button>
+        <div class="ui animated  button username-btn" tabindex="0" (click)="showModal=true">
+            <div class="visible content">{{profile.name||'Gust User'}} </div>
+            <div class="hidden content">
+                Modify
+            </div>
+        </div>
+        <div class="ui animated fade button" tabindex="0" (click)="toggleOnline()" *ngIf="profile.id">
+            <div class="visible content"><i class="talk icon" [class.outline]="!profile.online"></i></div>
+            <div class="hidden content">{{profile.online?'online':'offline'}}</div>
+        </div>
+        <img width="32" src="./avatars/{{profile.avatar}}.png" *ngIf="profile.id" />
+    </div>
+    <div class="chat-container">
+        <div class="users-list">
+            <div class="ui middle aligned selection celled list">
+                <div class="item" *ngFor="let user of getUsers()" (click)="selectedUserId=user.id" [class.active]="selectedUserId==user.id">
+                    <img class="ui avatar image" src="./avatars/{{user.avatar}}.png">
+                    <div class="content">
+                        <div class="header">{{user.name}} </div>
+                        <span [hidden]="user.online">offline</span>
+                    </div>
+                    <div class="right floated content" [hidden]="getUnreadCount(user.id)==0">
+                        <a class="ui  circular label">{{getUnreadCount(user.id)}}</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="messaging-box">
+            <div class="message-list">
+                <div *ngFor="let message of getMessages(selectedUserId)" [class.mine]="message.from==profile.id" >
+                    <span class="from">
+                        <img width="32" src="./avatars/{{getUser(message.from)?.avatar|| 'unknown'}}.png">
+                        <span>{{getUser(message.from)?.name}}</span>
+                    </span>
+                    {{message.message}}
+                </div>
+            </div>
+            <div class="writing-box" *ngIf="getUser(selectedUserId)?.online">
+                    <form class="ui form " [formGroup]="messagingForm"  (submit)="sendMessage()">
+                        <div class="ui action fluid input">
+                                <input type="text" placeholder="Message" formControlName="message" >
+                                <button class="ui icon button" type="submit" [disabled]="!messagingForm.valid">
+                                    <i class="send icon"></i>
+                                </button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="statics">
+    <span><i class="users icon"></i>Online Users {{statics.users}}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span><i class="user icon"></i>Online Gusts {{statics.guests}}</span>
+</div>
+
+
+<modal [show]="showModal" header="Modify Your Name">
+    <div class="content">
+        <div>
+            <form (submit)="changeName()">
+                <div class="ui input fluid" [formGroup]="modifyNameForm" >
+                    <input type="text" placeholder="Set new name ..." [value]="profile.name||''" formControlName="name">
+                    <input type="hidden"    formControlName="avatar" #avatar>
+                </div>
+                <br>
+                <div class="ui fluid input" >
+                    <div class="ui fluid buttons">
+                        <div  class="ui button" [class.active]="avatar.value=='1'" (click)="changeAvatar(1)"><img width="40" src="./avatars/1.png"></div>
+                        <div class="ui button" [class.active]="avatar.value=='2'" (click)="changeAvatar(2)"><img width="40" src="./avatars/2.png"></div>
+                        <div class="ui button" [class.active]="avatar.value=='3'" (click)="changeAvatar(3)"><img width="40" src="./avatars/3.png"></div>
+                        <div class="ui button" [class.active]="avatar.value=='4'" (click)="changeAvatar(4)"><img width="40" src="./avatars/4.png"></div>
+                        <div class="ui button" [class.active]="avatar.value=='5'" (click)="changeAvatar(5)"><img width="40" src="./avatars/5.png"></div>
+                        <div class="ui button" [class.active]="avatar.value=='6'" (click)="changeAvatar(6)"><img width="40" src="./avatars/6.png"></div>
+                        <div class="ui button" [class.active]="avatar.value=='7'" (click)="changeAvatar(7)"><img width="40" src="./avatars/7.png"></div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <div class="action">
+        <button class="ui button" (click)="showModal=false">Cancel</button>
+        <button class="ui button primary" [disabled]="!modifyNameForm.valid" (click)="changeName()">Save</button>
+    </div>
+</modal>

@@ -1,0 +1,74 @@
+html,body{
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-flow: column;
+  font-family: sans-serif;
+
+  &>div{
+    flex: 1;
+    border:solid 1px gray;
+  }
+
+  &>#settings{
+    display: flex;
+    flex-flow: row nowrap;
+    &>div{
+      flex: 1;
+      display: flex;
+      text-align: center;
+      flex-flow: column nowrap;
+      margin: 5px;
+      background-color: #eee;
+
+      &>input,select{
+        flex:1;
+        height: 30px;
+        margin:5px 10px;
+        font-size: 1.3em;
+      }
+      &>select{
+        height: 37px;
+      }
+      &>h3{
+        font-size: 1.8em;
+      }
+
+    }
+  }
+
+
+  &>#clients{
+    display: flex;
+
+    flex-flow: row wrap;
+    &>div{
+      border: solid 1px gray;
+      flex: 1;
+      text-align: center;
+    }
+
+  }
+}
+
+
+.red{
+  background-color: #ff6f70;
+}
+.green{
+  background-color: #60ff8c;
+
+}
+.blue{
+  background-color: #7ed4ff;
+}
+.pink{
+  background-color: hotpink;
+}
+.orange{
+  background-color: orange;
+}
+.purple{
+  background-color: mediumpurple;
+}

@@ -1,0 +1,17 @@
+html, body {
+  height: 100%; }
+
+body {
+  display: flex;
+  flex-flow: column; }
+  body > #input {
+    flex: 0 0 30px;
+    font-size: 1.5em; }
+  body > #messaging-box {
+    flex: 1;
+    margin-top: 10px;
+    border: solid 1px #eee;
+    border-radius: 3px;
+    overflow-y: auto; }
+
+/*# sourceMappingURL=main.css.map */
